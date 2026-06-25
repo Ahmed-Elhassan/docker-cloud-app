@@ -1,23 +1,28 @@
-# Containerized Web App with Docker & GitHub 🐳
+name: Build and Push Docker Image
 
-A containerized web application built with Docker and nginx.
+on:
+  push:
+    branches:
+      - main  # أو master حسب اسم الفرع الرئيسي عندك
 
-## Technologies Used
-- Docker
-- nginx
-- HTML
-- GitHub Actions (Coming Soon)
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
 
-## Project Structure
-docker-cloud-app/
-├── html/
-│   └── index.html
-└── Dockerfile
+    steps:
+    - name: Checkout Code
+      uses: actions/actions/checkout@v4
 
-## How to Run
-docker pull ahmedelhassan77/docker-cloud-app:v1
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-docker run -d -p 8080:80 ahmedelhassan77/docker-cloud-app:v1
-
-## Author
-Ahmed El-Hassan - Cloud Engineer
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ahmedelhassan77/docker-cloud-app:v1
